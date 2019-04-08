@@ -8,7 +8,6 @@
   <ItemGroup>
     <Folder Include="Config\" />
     <Folder Include="Data\" />
-    <Folder Include="Data\Contracts\" />
     <Folder Include="Config\Builder\" />
     <Folder Include="Config\Exceptions\" />
   </ItemGroup>
