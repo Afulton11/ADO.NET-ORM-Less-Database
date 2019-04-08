@@ -34,14 +34,14 @@ namespace DatabaseFactory.Config
  
         public static IServiceCollection AddDatabase<TContext>(
             this IServiceCollection services,
-            ServiceLifetime contextLifetime,
+            ServiceLifetime contextLifetime = ServiceLifetime.Scoped,
             ServiceLifetime optionsLifetime = ServiceLifetime.Scoped)
             where TContext : Database =>
                 services.AddDatabase<TContext, TContext>(contextLifetime, optionsLifetime);
 
         public static IServiceCollection AddDatabase<TContextService, TContextImpl>(
             this IServiceCollection services,
-            ServiceLifetime contextLifetime,
+            ServiceLifetime contextLifetime = ServiceLifetime.Scoped,
             ServiceLifetime optionsLifetime = ServiceLifetime.Scoped)
             where TContextImpl : Database, TContextService
             where TContextService : class =>

@@ -1,6 +1,4 @@
-﻿using System;
-using DatabaseFactory.Data;
-using DatabaseFactory.Data.Contracts;
+﻿using DatabaseFactory.Data;
 using EnsureThat;
 using Microsoft.Data.Sqlite;
 
@@ -34,7 +32,7 @@ namespace DatabaseFactory.Config.Builder
 
         }
 
-        public void UseSqlServer(string connectionString)
+        public void UseConnectionString(string connectionString)
         {
             EnsureArg.IsNotEmptyOrWhitespace(connectionString);
 

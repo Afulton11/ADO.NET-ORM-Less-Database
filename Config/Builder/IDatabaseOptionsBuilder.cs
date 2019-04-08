@@ -1,8 +1,4 @@
-﻿using System;
-using DatabaseFactory.Data;
-using DatabaseFactory.Data.Contracts;
-
-namespace DatabaseFactory.Config.Builder
+﻿namespace DatabaseFactory.Config.Builder
 {
     public interface IDatabaseOptionsBuilder
     {
@@ -16,6 +12,6 @@ namespace DatabaseFactory.Config.Builder
         /// <summary>
         /// Builds a SQL Server database isntance from the given connectionString.
         /// <param name="connectionString">The url to connect to the sql database</param>
-        void UseSqlServer(string connectionString);
+        void UseConnectionString(string connectionString);
     }
 }
