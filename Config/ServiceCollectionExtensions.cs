@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reflection;
 using DatabaseFactory.Config.Builder;
 using DatabaseFactory.Data;
-using DatabaseFactory.Data.Contracts;
 using EnsureThat;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -12,26 +11,6 @@ namespace DatabaseFactory.Config
 {
     public static class ServiceCollectionExtensions
     {
-    
-        public static IServiceCollection RegisterCommandQuery(this IServiceCollection services)
-        {
-            services.RegisterAllTypes(typeof(IQueryProcessor));
-            services.RegisterAllTypes(typeof(IHandleCommand<>));
-            services.RegisterAllTypes(typeof(IHandleQuery<,>));
-            services.RegisterAllTypes(typeof(IRepsoitory<>));
-
-            return services;
-        }
-
-        private static void RegisterAllTypes(this IServiceCollection services, Type type)
-        {
-            var assembly = type.Assembly;
-            var typesFromAssemblies = assembly.DefinedTypes.Where(x => x.GetInterfaces().Contains(type));
-
-            foreach (var implType in typesFromAssemblies)
-                services.Add(new ServiceDescriptor(type, implType, ServiceLifetime.Transient));
-        }
- 
         public static IServiceCollection AddDatabase<TContext>(
             this IServiceCollection services,
             ServiceLifetime contextLifetime = ServiceLifetime.Scoped,
