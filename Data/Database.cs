@@ -3,6 +3,7 @@ using System.Data;
 using System.Reflection;
 using DatabaseFactory.Config;
 using DatabaseFactory.Data.Contracts;
+using DatabaseFactory.Data.Exceptions;
 using EnsureThat;
 
 namespace DatabaseFactory.Data
@@ -39,6 +40,12 @@ $@"parameter {nameof(options)} must be assignable from {GetType().GetTypeInfo().
         public abstract IDbCommand CreateStoredProcCommand(string procName, IDbTransaction transaction);
         public abstract IDataParameter CreateParameter(string parameterName, object parameterValue);
 
+        /// <summary>
+        /// Creates a connection the database, then begins a new transaction.
+        /// </summary>
+        /// <param name="transactionAction">The function to run before executing the transaction</param>
+        /// <exception cref="Exception">The transaction failed, but was successfully rolled back.</exception>
+        /// <exception cref=""></exception>
         public void TryExecuteTransaction(Action<IDbTransaction> transactionAction)
         {
             using (IDbConnection connection = CreateOpenConnection())
@@ -53,9 +60,8 @@ $@"parameter {nameof(options)} must be assignable from {GetType().GetTypeInfo().
                 }
                 catch (Exception ex)
                 {
-                    Console.Error.WriteLine(ex);
-
                     TryRollback(transaction);
+                    throw ex;
                 }
             }
         }
@@ -68,7 +74,7 @@ $@"parameter {nameof(options)} must be assignable from {GetType().GetTypeInfo().
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine(ex);
+                throw new RollbackFailedException(transaction, ex);
             }
         }
 
