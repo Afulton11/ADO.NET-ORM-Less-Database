@@ -10,6 +10,7 @@ namespace DatabaseFactory.Data.Contracts
         IDbConnection CreateOpenConnection();
         IDbCommand CreateCommand(string commandText, IDbConnection connection);
         IDbCommand CreateStoredProcCommand(string procName, IDbConnection connection);
+        IDbCommand CreateStoredProcCommand(string procName, IDbTransaction transaction);
         IDataParameter CreateParameter(string parameterName, object parameterValue);
 
         void TryExecuteTransaction(Action<IDbTransaction> transactionAction);
