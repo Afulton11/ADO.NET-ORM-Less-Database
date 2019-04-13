@@ -20,6 +20,7 @@ namespace DatabaseFactory.Data.Contracts
         void TryRollback(IDbTransaction transaction);
 
         void ExecuteReader(IDbCommand command, Action<IDataReader> onRead);
+        TResult ExecuteReader<TResult>(IDbCommand command, Func<IDataReader, TResult> onRead);
 
         T ExecuteScalar<T>(IDbCommand command);
 

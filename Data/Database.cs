@@ -106,13 +106,21 @@ $@"parameter {nameof(options)} must be assignable from {GetType().GetTypeInfo().
             }
         }
 
-        public void ExecuteReader(IDbCommand command, Action<IDataReader> onRead)
+        public void ExecuteReader(IDbCommand command, Action<IDataReader> onRead) =>
+            ExecuteReader<object>(command, (reader) =>
+            {
+                onRead(reader);
+                return null;
+            });
+
+
+        public TResult ExecuteReader<TResult>(IDbCommand command, Func<IDataReader, TResult> onRead)
         {
             using (command)
             {
                 using (IDataReader reader = command.ExecuteReader())
                 {
-                    onRead?.Invoke(reader);
+                    return onRead.Invoke(reader);
                 }
             }
         }
