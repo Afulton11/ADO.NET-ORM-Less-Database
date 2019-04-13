@@ -46,25 +46,12 @@ $@"parameter {nameof(options)} must be assignable from {GetType().GetTypeInfo().
         /// <param name="transactionAction">The function to run before executing the transaction</param>
         /// <exception cref="Exception">The transaction failed, but was successfully rolled back.</exception>
         /// <exception cref="RollbackFailedException">The transaction failed & was NOT rolled back.</exception>
-        public void TryExecuteTransaction(Action<IDbTransaction> transactionAction)
-        {
-            using (IDbConnection connection = CreateOpenConnection())
+        public void TryExecuteTransaction(Action<IDbTransaction> transactionAction) =>
+            TryExecuteTransaction<object>((transaction) =>
             {
-                var transaction = connection.BeginTransaction();
-
-                try
-                {
-                    transactionAction(transaction);
-
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    TryRollback(transaction);
-                    throw ex;
-                }
-            }
-        }
+                transactionAction(transaction);
+                return null;
+            });
 
         /// <summary>
         /// Creates a connection to the database, then begins a new transaction.
