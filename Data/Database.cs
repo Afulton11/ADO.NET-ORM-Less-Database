@@ -41,11 +41,11 @@ $@"parameter {nameof(options)} must be assignable from {GetType().GetTypeInfo().
         public abstract IDataParameter CreateParameter(string parameterName, object parameterValue);
 
         /// <summary>
-        /// Creates a connection the database, then begins a new transaction.
+        /// Creates a connection to the database, then begins a new transaction.
         /// </summary>
         /// <param name="transactionAction">The function to run before executing the transaction</param>
         /// <exception cref="Exception">The transaction failed, but was successfully rolled back.</exception>
-        /// <exception cref=""></exception>
+        /// <exception cref="RollbackFailedException">The transaction failed & was NOT rolled back.</exception>
         public void TryExecuteTransaction(Action<IDbTransaction> transactionAction)
         {
             using (IDbConnection connection = CreateOpenConnection())
@@ -57,6 +57,34 @@ $@"parameter {nameof(options)} must be assignable from {GetType().GetTypeInfo().
                     transactionAction(transaction);
 
                     transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    TryRollback(transaction);
+                    throw ex;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a connection to the database, then begins a new transaction.
+        /// </summary>
+        /// <param name="transactionAction">The function to run before executing the transaction</param>
+        /// <exception cref="Exception">The transaction failed, but was successfully rolled back.</exception>
+        /// <exception cref="RollbackFailedException">The transaction failed & was NOT rolled back.</exception>
+        public TResult TryExecuteTransaction<TResult>(Func<IDbTransaction, TResult> transactionFunc)
+        {
+            using (IDbConnection connection = CreateOpenConnection())
+            {
+                var transaction = connection.BeginTransaction();
+
+                try
+                {
+                    var result = transactionFunc(transaction);
+
+                    transaction.Commit();
+
+                    return result;
                 }
                 catch (Exception ex)
                 {

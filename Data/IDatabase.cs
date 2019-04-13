@@ -14,6 +14,9 @@ namespace DatabaseFactory.Data.Contracts
         IDataParameter CreateParameter(string parameterName, object parameterValue);
 
         void TryExecuteTransaction(Action<IDbTransaction> transactionAction);
+
+        TResult TryExecuteTransaction<TResult>(Func<IDbTransaction, TResult> transactionFunc);
+
         void TryRollback(IDbTransaction transaction);
 
         void ExecuteReader(IDbCommand command, Action<IDataReader> onRead);
