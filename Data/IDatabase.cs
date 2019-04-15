@@ -7,7 +7,7 @@ namespace DatabaseFactory.Data.Contracts
     {
         IDbConnection CreateConnection();
         IDbCommand CreateCommand();
-        IDbConnection CreateOpenConnection();
+        IDbConnection OpenConnection(IDbConnection connection);
         IDbCommand CreateCommand(string commandText, IDbConnection connection);
         IDbCommand CreateStoredProcCommand(string procName, IDbConnection connection);
         IDbCommand CreateStoredProcCommand(string procName, IDbTransaction transaction);

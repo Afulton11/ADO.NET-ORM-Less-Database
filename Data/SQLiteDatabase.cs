@@ -64,10 +64,12 @@ namespace DatabaseFactory.Data
         public override IDbConnection CreateConnection() =>
             new SqliteConnection(options.ConnectionString);
 
-        public override IDbConnection CreateOpenConnection()
+        public override IDbConnection OpenConnection(IDbConnection connection)
         {
-            var connection = CreateConnection();
-            connection.Open();
+            if (connection.State == ConnectionState.Closed)
+            {
+                connection.Open();
+            }
 
             return connection;
         }

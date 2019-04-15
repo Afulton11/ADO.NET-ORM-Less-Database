@@ -8,7 +8,6 @@ namespace DatabaseFactory.Config.Builder
         IDatabaseOptionsBuilder
         where TContext : Database
     {
-        private readonly DatabaseOptions<TContext> _options = new DatabaseOptions<TContext>();
 
         /// <summary>
         /// Creates a new instance of the <see cref="DatabaseOptionsBuilder{TContext}"/>class for building <see cref="DatabaseOptions{TContext}"/>
@@ -28,7 +27,7 @@ namespace DatabaseFactory.Config.Builder
             {
                 DataSource = dataSource
             };
-            _options.ConnectionString = connectionStringBuilder.ConnectionString;
+            Options.ConnectionString = connectionStringBuilder.ConnectionString;
 
         }
 
@@ -36,10 +35,9 @@ namespace DatabaseFactory.Config.Builder
         {
             EnsureArg.IsNotEmptyOrWhitespace(connectionString);
 
-            _options.ConnectionString = connectionString;
-
+            Options.ConnectionString = connectionString;
         }
 
-        public DatabaseOptions<TContext> Options => _options;
+        public DatabaseOptions<TContext> Options { get; } = new DatabaseOptions<TContext>();
     }
 }

@@ -33,7 +33,7 @@ $@"parameter {nameof(options)} must be assignable from {GetType().GetTypeInfo().
 
         public abstract IDbConnection CreateConnection();
         public abstract IDbCommand CreateCommand();
-        public abstract IDbConnection CreateOpenConnection();
+        public abstract IDbConnection OpenConnection(IDbConnection connection);
         public abstract IDbCommand CreateCommand(string commandText, IDbConnection connection);
         public abstract IDbCommand CreateCommand(string commandText, IDbTransaction transaction);
         public abstract IDbCommand CreateStoredProcCommand(string procName, IDbConnection connection);
@@ -61,8 +61,9 @@ $@"parameter {nameof(options)} must be assignable from {GetType().GetTypeInfo().
         /// <exception cref="RollbackFailedException">The transaction failed & was NOT rolled back.</exception>
         public TResult TryExecuteTransaction<TResult>(Func<IDbTransaction, TResult> transactionFunc)
         {
-            using (IDbConnection connection = CreateOpenConnection())
+            using (IDbConnection connection = CreateConnection())
             {
+                OpenConnection(connection);
                 var transaction = connection.BeginTransaction();
 
                 try

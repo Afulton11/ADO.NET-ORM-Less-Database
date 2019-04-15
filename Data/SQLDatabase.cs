@@ -1,8 +1,6 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using DatabaseFactory.Config;
-using Microsoft.Extensions.Options;
 
 namespace DatabaseFactory.Data
 {
@@ -34,6 +32,7 @@ namespace DatabaseFactory.Data
             var cmd = CreateCommand();
             cmd.CommandText = commandText;
             cmd.Transaction = transaction;
+            cmd.Connection = transaction.Connection;
 
             return cmd;
         }
@@ -55,19 +54,31 @@ namespace DatabaseFactory.Data
         {
             var cmd = CreateCommand();
             cmd.CommandText = procName;
-            cmd.Transaction = transaction;
+            cmd.Connection = transaction.Connection;
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Transaction = transaction;
 
             return cmd;
         }
 
-        public override IDbConnection CreateConnection() =>
-            new SqlConnection(options.ConnectionString);
-
-        public override IDbConnection CreateOpenConnection()
+        public override IDbConnection CreateConnection()
         {
-            var connection = CreateConnection();
-            connection.Open();
+            var connection = new SqlConnection();
+            connection.ConnectionString = options.ConnectionString;
+
+            return connection;
+        }
+
+        public override IDbConnection OpenConnection(IDbConnection connection)
+        {
+            if (connection.State == ConnectionState.Closed)
+            {
+                if (string.IsNullOrEmpty(connection.ConnectionString))
+                {
+                    connection.ConnectionString = options.ConnectionString;
+                }
+                connection.Open();
+            }
 
             return connection;
         }
